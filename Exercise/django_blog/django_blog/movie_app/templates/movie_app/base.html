@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>{% block title %}{% endblock %}</title>
+    </head>
+    <body>
+        <header>
+            <h1>Django Movie Catalog</h1>
+            <nav>
+                <ul>
+                    <li>
+                        <a href="{% url 'movie_app:movie_list' %}"
+                            >Movie List</a
+                        >
+                    </li>
+                    <li>
+                        <a href="{% url 'movie_app:add_movie' %}">Add Movie</a>
+                    </li>
+                    <li>
+                        <a href="{% url 'movie_app:remove_movie' %}"
+                            >Remove Movie</a
+                        >
+                    </li>
+                    <!-- Add more links as needed -->
+                </ul>
+            </nav>
+        </header>
+
+        <main>{% block content %}{% endblock %}</main>
+    </body>
+</html>

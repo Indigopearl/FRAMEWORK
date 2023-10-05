@@ -1,14 +1,15 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Search Results</title>
-</head>
-<body>
-    <h1>Search Results for "{{ search_query }}"</h1>
-    <ul>
-        {% for movie in movies %}
-            <li>{{ movie.title }} ({{ movie.year }})</li>
-        {% endfor %}
-    </ul>
-</body>
-</html>
+{% extends "movie_app/base.html" %} {% block title %}Search Results{% endblock
+%} {% block content %}
+<h1>Search Results for "{{ search_query }}"</h1>
+<form method="get" action="{% url 'movie_app:search_movies' %}">
+    <input type="text" name="title" placeholder="Search by title" />
+    <button type="submit">Search</button>
+</form>
+
+<!-- Display search results here -->
+<ul>
+    {% for movie in movies %}
+    <li>{{ movie.title }} ({{ movie.year }})</li>
+    {% endfor %}
+</ul>
+{% endblock %}

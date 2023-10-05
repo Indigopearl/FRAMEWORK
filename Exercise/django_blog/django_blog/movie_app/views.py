@@ -1,30 +1,39 @@
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404, redirect
 from .models import Movie
+from .forms import MovieForm  # Import the MovieForm you created
 
 
 def movie_list(request):
-    # Retrieve all movies from the database
     movies = Movie.objects.all()
-
-    # Render the 'movie_list.html' template with the list of movies
     return render(request, 'movie_app/movie_list.html', {'movies': movies})
 
 
 def movie_details(request, movie_id):
-    # Retrieve the movie with the specified movie_id from the database
-    movie = Movie.objects.get(id=movie_id)
-
-    # Render the 'movie_details.html' template with the movie details
+    movie = get_object_or_404(Movie, id=movie_id)
     return render(request, 'movie_app/movie_details.html', {'movie': movie})
 
 
 def search_movies(request):
-    # Get the search query from the URL's GET parameters
     search_query = request.GET.get('title', '')
-
-    # Perform a case-insensitive search for movies containing the search query in their title or genre
-    movies = Movie.objects.filter(title__icontains=search_query) | Movie.objects.filter(
-        genre__icontains=search_query)
-
-    # Render the 'movie_search_results.html' template with the search results
+    movies = Movie.objects.filter(title__icontains=search_query)
     return render(request, 'movie_app/movie_search_results.html', {'movies': movies, 'search_query': search_query})
+
+
+def add_movie(request):
+    if request.method == 'POST':
+        form = MovieForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('movie_app:movie_list')
+    else:
+        form = MovieForm()
+    return render(request, 'movie_app/add_movie.html', {'form': form})
+
+
+def remove_movie(request):
+    if request.method == 'POST':
+        movie_id = request.POST.get('movie_id')
+        if movie_id:
+            Movie.objects.filter(id=movie_id).delete()
+    movies = Movie.objects.all()
+    return render(request, 'movie_app/remove_movie.html', {'movies': movies})

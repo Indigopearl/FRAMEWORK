@@ -1,14 +1,13 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Movie List</title>
-</head>
-<body>
-    <h1>Movie List</h1>
-    <ul>
-        {% for movie in movies %}
-            <li>{{ movie.title }} ({{ movie.year }})</li>
-        {% endfor %}
-    </ul>
-</body>
-</html>
+{% extends "movie_app/base.html" %} {% block title %}Movie List{% endblock %} {%
+block content %}
+<h1>Movie List</h1>
+<ul>
+    {% for movie in movies %}
+    <li>
+        <a href="{% url 'movie_app:movie_details' movie.id %}">
+            {{ movie.title }} ({{ movie.year }})
+        </a>
+    </li>
+    {% endfor %}
+</ul>
+{% endblock %}

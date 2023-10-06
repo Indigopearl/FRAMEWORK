@@ -1,0 +1,41 @@
+<!-- books/templates/book_list.html -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bookstore - Book List</title>
+    <!-- Link to your CSS file -->
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+</head>
+<body>
+    <header>
+        <h1>Welcome to the Bookstore</h1>
+        <nav>
+            <ul>
+                <li><a href="/">Home</a></li>
+                <li><a href="/books/">Books</a></li>
+                <li><a href="/about/">About</a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <section class="book-list">
+            <h2>Book List</h2>
+            <ul>
+                {% for book in books %}
+                    <li>
+                        <h3>{{ book.title }}</h3>
+                        <p>Author: {{ book.author }}</p>
+                        <p>Price: ${{ book.price }}</p>
+                    </li>
+                {% endfor %}
+            </ul>
+        </section>
+    </main>
+    <footer>
+        &copy; 2023 Bookstore
+    </footer>
+</body>
+</html>

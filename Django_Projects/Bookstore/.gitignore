@@ -1,5 +1,0 @@
-*.json
-venv
-*.sh
-*.pyc
-app/media/audio/

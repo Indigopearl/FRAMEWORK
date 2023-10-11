@@ -1,0 +1,35 @@
+/* Styling the header */
+header {
+    background-color: #333; /* Background color for the header */
+    color: #fff; /* Text color for the links */
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+/* Remove link underlines and add hover effect */
+header a {
+    text-decoration: none;
+    color: #fff;
+    transition: color 0.3s; /* Smooth color transition on hover */
+}
+
+header a:hover {
+    color: #ff6600; /* Change the link color on hover */
+}
+
+/* Add a scrollbar to the header if it overflows */
+header {
+    overflow-x: auto;
+}
+
+/* Add font styles */
+body {
+    font-family: Arial, sans-serif;
+    font-size: 16px;
+}
+
+/* Additional styles for your content can be added below */
+.content {
+    padding: 20px;
+}

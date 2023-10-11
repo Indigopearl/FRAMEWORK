@@ -208,3 +208,217 @@ At the bottom, we've added a block tag called content.
 {% endblock content %}
 
 ```
+
+### Built-in template Functions
+**add:**
+```
+{{ value|add:"2" }}
+```
+
+if value is 4, then the output will be 6.
+
+This filter will first try to coerce both values to integers.
+If this fails, it’ll attempt to add the values together anyway.
+This will work on some data types (strings, list, etc.) and fail on others.
+If it fails, the result will be an empty string.
+
+
+For example, if we have:
+
+```
+{{ first|add:second }}
+```
+
+and first is [1, 2, 3] and second is [4, 5, 6], then the output will be [1, 2, 3, 4, 5, 6].
+
+**lower:**
+```
+{{ value|lower }}
+```
+If value is Totally LOVING this Album!, the output will be totally loving this album!.
+
+**date:**
+
+```
+{{ value|date:"D d M Y" }}
+```
+If value is a datetime object (e.g., the result of datetime.datetime.now()), the output will be the string 'Wed 09 Jan 2008'.
+
+## Test
+
+- It’s important to add automated tests and run them whenever a codebase changes
+- Tests require a small amount of upfront time to write but more than pay off later on.
+- In the words of Django co-creator Jacob Kaplan-Moss, “Code
+without tests is broken as designed.”
+
+The Python standard library contains a built-in testing framework called unittest that uses TestCase instances and a long list of assert methods to check for and report failures. 
+Django’s testing framework provides several extensions on top of Python’s unittest.TestCase base class.
+
+1. These include a test client for making dummy Web browser requests,
+2. several Django-specific additional assertions
+3. some test case classes:
+
+1. SimpleTestCase,
+2. TestCase, 
+3. TransactionTestCase
+
+- Generally speaking, SimpleTestCase is used when a database is unnecessary while TestCase is used when you want to test the database.
+- TransactionTestCase is helpful to directly test database transactions
+
+If you look within our pages app, Django already provided a tests.py
+file we can use. 
+Since no database is involved in our project, we will import
+SimpleTestCase at the top of the file. 
+
+
+For our first tests, we’ll check that the two URLs for our website, the homepage and about page, both return HTTP status codes of 200
+(status code 200  is the standard response for a successful HTTP request)
+
+```python
+# pages/tests.py
+from django.test import SimpleTestCase
+
+# Create your tests here.
+class HomePageTests(SimpleTestCase):
+    def test_url_exists(self):
+        response = self.client.get('/')
+        self.assertEqual(response.status_code, 200)
+
+class AboutPageTest(SimpleTestCase):
+    def test_url_exists(self):
+        response = self.client.get('/about/')
+        self.assertEqual(response.status_code, 200)
+```
+
+What else can we test? 
+
+At the moment we are testing the actual URL route for
+each page: / for the homepage and /about for the about page.
+
+But remember that we also added a URL name for each page in the 
+pages/urls.py file. 
+
+
+To do that we can use the very handy Django utility function **reverse**. 
+
+Instead of going to a URL path first, it looks for the URL name. 
+In general, it is a bad idea to hardcode URLs, especially in templates. 
+By using reverse we can avoid this.
+
+For now, we want to test the URL names for our two  pages. 
+Import reverse at the top of the file add then add a new unit test for each below.
+
+```python
+from django.test import SimpleTestCase
+from django.urls import reverse
+
+# Create your tests here.
+class HomePageTests(SimpleTestCase):
+    def test_url_exists(self):
+        response = self.client.get('/')
+        self.assertEqual(response.status_code, 200)
+
+    def test_url_available_by_name(self):
+        response = self.client.get(reverse('home'))
+        self.assertEqual(response.status_code, 200)
+
+class AboutPageTest(SimpleTestCase):
+    def test_url_exists(self):
+        response = self.client.get('/about/')
+        self.assertEqual(response.status_code, 200)
+
+    def test_url_available_by_name(self):
+        response = self.client.get(reverse('about'))
+        self.assertEqual(response.status_code, 200)
+```
+
+
+Let’s make sure that the correct templates 
+-home.html and about.html-
+are used on each page 
+
+```python
+from django.test import SimpleTestCase
+from django.urls import reverse
+
+# Create your tests here.
+
+class HomePageTests(SimpleTestCase):
+    def test_url_exists(self):
+        response = self.client.get('')
+        self.assertEqual(response.status_code, 200)
+
+    def test_url_available_by_name(self):
+        response = self.client.get(reverse('home'))
+        self.assertEqual(response.status_code, 200)
+
+    def test_template_name_correct(self):
+        response = self.client.get(reverse('home'))
+        self.assertTemplateUsed(response, 'home.html')
+
+class AboutPageTest(SimpleTestCase):
+    def test_url_exists(self):
+        response = self.client.get('/about/')
+        self.assertEqual(response.status_code, 200)
+    
+    def test_url_available_by_name(self):
+        response = self.client.get(reverse('about'))
+        self.assertEqual(response.status_code, 200)
+
+    def test_template_name_correct(self):
+        response = self.client.get(reverse('about'))
+        self.assertTemplateUsed(response, 'about.html')
+```
+
+
+and that they display the expected content of
+
+"<h1>Homepage</h1>" and "<h1>About page</h1>" 
+
+respectively.
+
+We can use *assertTemplateUsed* and *assertContains* to achieve this.
+
+```python
+from django.test import SimpleTestCase
+from django.urls import reverse
+
+# Create your tests here.
+
+class HomePageTests(SimpleTestCase):
+    def test_url_exists(self):
+        response = self.client.get('')
+        self.assertEqual(response.status_code, 200)
+
+    def test_url_available_by_name(self):
+        response = self.client.get(reverse('home'))
+        self.assertEqual(response.status_code, 200)
+
+    def test_template_name_correct(self):
+        response = self.client.get(reverse('home'))
+        self.assertTemplateUsed(response, 'home.html')
+
+    def test_template_content(self):
+        response = self.client.get(reverse('home'))
+        self.assertContains(response, '<h1>Homepage</h1>')
+        # self.assertIn(b'<h1>Homepage</h1>', response.content)
+
+
+class AboutPageTest(SimpleTestCase):
+    def test_url_exists(self):
+        response = self.client.get('/about/')
+        self.assertEqual(response.status_code, 200)
+    
+    def test_url_available_by_name(self):
+        response = self.client.get(reverse('about'))
+        self.assertEqual(response.status_code, 200)
+
+    def test_template_name_correct(self):
+        response = self.client.get(reverse('about'))
+        self.assertTemplateUsed(response, 'about.html')
+
+    def test_template_content(self):
+        response = self.client.get(reverse('about'))
+        self.assertContains(response, '<h1>About page</h1>')
+
+```

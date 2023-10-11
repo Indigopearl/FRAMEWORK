@@ -1,0 +1,14 @@
+<!--templates/home2.html-->
+
+{% extends "base.html" %}
+
+{% block content %}
+<h1>Homepage2</h1>
+<h2>{{ key1 }}</h2>
+<h3>{{ key2 }}</h3>
+<h4>{{ key3|add:'World' }}</h4>
+<p>{{ key3|lower }}</p>
+<h5>{{ first|add:second }}</h5>
+<h6>{{ today|date:"D d M Y" }}</h6>
+{% endblock content %}
+

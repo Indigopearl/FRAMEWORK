@@ -92,7 +92,7 @@ Something like Model-View-Template-URL (MVTU) would be a more accurate descripti
 - URL Configuration: Regular expression components configured to a View
 
 - The “View” in MVC is analogous to a “Template” in Django
-- the “Controller” in MVC is divided into a Django “View” and “URL config.” 
+- the “Controller” in MVC is divided into a Django “View” and “URL config.” (**sic!**)
 
 - let's map out the order of a given HTTP request/response cycle for Django:
 

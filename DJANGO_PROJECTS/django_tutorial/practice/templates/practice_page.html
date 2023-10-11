@@ -1,39 +1,35 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Django Templates Exercise</title>
-</head>
-<body>
-    <h1>For Loop and If Tag</h1>
-    <ul>
-        {% for number in list_of_numbers %}
-            {% if number|divisibleby:2 %}
-                <li style="color: blue">{{ number }}</li>
-            {% else %}
-                <li style="color: red">{{ number }}</li>
-            {% endif %}
-        {% endfor %}
-    </ul>
+{% extends "base.html" %}
 
-    <h1>String Filters</h1>
-    <p>Greeting in uppercase: {{ greeting|upper }}</p>
-    <p>Reversed greeting: {{ greeting|slice:"::-1" }}</p>
+{% block content %}
 
-    <h1>Dictionary and String Concatenation</h1>
-    <p>User's full name: {{ user_info.first_name }} - {{ user_info.last_name }}</p>
+<h1>For Loop and If Tag</h1>
+<ul>
+    {% for number in list_of_numbers %}
+    <li {% if number|divisibleby:2 %}style="color: blue"{% else %}style="color: red"{% endif %}>
+        {{ number }}
+    </li>
+    {% endfor %}
+</ul>
 
-    <h1>Conditional Display</h1>
-    {% if is_vip %}
-        <p style="font-weight: bold">VIP Member</p>
-    {% else %}
-        <p>Regular Member</p>
-    {% endif %}
+<h1>String Filters</h1>
+<p>Greeting in uppercase: {{ greeting|upper }}</p>
+<p>Reversed greeting: {{ greeting|slice:":-1" }}</p>
 
-    <h1>Safe Filter</h1>
-    <p>Notes without rendering HTML tags: {{ notes|safe }}</p>
-    <p>Notes with rendered HTML tags: {{ notes }}</p>
+<h1>Dictionary and String Concatenation</h1>
+<p>User's full name: {{ user_info.first_name }} - {{ user_info.last_name }}</p>
 
-    <h1>Bonus</h1>
-    <p>Today's date: {{ now }}</p>
-</body>
-</html>
+<h1>Conditional Display</h1>
+{% if is_vip %}
+<p style="font-weight: bold">VIP Member</p>
+{% else %}
+<p>Regular Member</p>
+{% endif %}
+
+<h1>Safe Filter</h1>
+<p>Notes without rendering HTML tags: {{ notes|safe }}</p>
+<p>Notes with rendered HTML tags: {{ notes|safe }}</p>
+
+<h1>Bonus</h1>
+<p>Today's date: {{ now }}</p>
+
+{% endblock %}

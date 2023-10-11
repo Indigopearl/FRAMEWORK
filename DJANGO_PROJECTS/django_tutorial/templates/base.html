@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Your Django Website</title>
+    <style>
+        body {
+            text-align: center;
+            font-family: Arial, sans-serif;
+            background-color: #f2f2f2;
+            margin: 0;
+            padding: 0;
+        }
+        .header {
+            background-color: #333;
+            color: white;
+            padding: 10px;
+            display: flex;
+            justify-content: space-between;
+        }
+        .header h1 {
+            margin: 0;
+        }
+        .header ul {
+            list-style: none;
+            padding: 0;
+            display: flex;
+        }
+        .header ul li {
+            margin-right: 10px;
+        }
+        .header ul li a {
+            color: white;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+        .header ul li a:hover {
+            color: #FF5733; /* Change to your preferred hover color */
+            text-decoration: underline;
+        }
+        .content {
+            margin: 20px;
+            padding: 20px;
+            background-color: white;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Your Django Website</h1>
+        <ul>
+            <li><a href="{% url 'home' %}">Home</a></li>
+            <li><a href="{% url 'about' %}">About</a></li>
+            <li><a href="{% url 'practice' %}">Practice</a></li>
+            <li><a href="{% url 'admin:index' %}">Admin</a></li>
+        </ul>
+    </div>
+
+    <div class="content">
+        {% block content %}{% endblock %}
+    </div>
+</body>
+</html>

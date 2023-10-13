@@ -25,7 +25,7 @@ class AboutViewTestCase(TestCase):
 
     def test_about_view_has_correct_message(self):
         response = self.client.get(reverse("about"))
-        self.assertContains(response, "About us page.", html=True)
+        self.assertContains(response, "Welcome To Our About Page")
 
     def test_about_view_uses_correct_template(self):
         response = self.client.get(reverse("about"))

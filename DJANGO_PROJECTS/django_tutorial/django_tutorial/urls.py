@@ -22,7 +22,7 @@ from practice.views import practice_view
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('about/', about_view, name='about'),
-    path('home/', home_view, name='home'),
+    path('', home_view, name='home'),
     path('practice/', practice_view, name='practice'),
-    path('', home_view, name='home_redirect'),
+    path('test/', home_view, name='home_redirect'),
 ]

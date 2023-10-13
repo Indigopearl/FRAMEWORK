@@ -1,7 +1,11 @@
+<!-- templates/about.html -->
+
 {% extends "base.html" %}
+
+{% load custom_filters %}
 
 {% block content %}
 
-        <h1>{{ message }}</h1>
+<h1>{{ "Welcome to our about page" | capitalize_words }}</h1>
 
-        {% endblock %}
+{% endblock %}

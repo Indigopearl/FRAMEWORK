@@ -3,9 +3,12 @@
 
 {% extends "base.html" %}
 
+{% block page_title %}My Django Practice Page{% endblock %}
+
 {% block content %}
 
 <h2>For Loop and If Tag</h2>
+
 <ul>
     {% for number in list_of_numbers %}
     <li {% if number|divisibleby:2 %}style="color: blue"{% else %}style="color: red"{% endif %}>

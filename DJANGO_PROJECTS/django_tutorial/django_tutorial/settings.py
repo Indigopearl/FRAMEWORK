@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     "practice",
     "testing_app",
     "common_tags",
+    "core",
 ]
 
 MIDDLEWARE = [
@@ -125,6 +126,8 @@ STATIC_URL = "/static/"
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+LOGIN_TEMPLATE = 'registration/login.html'
 
 
 COMPANY_NAME = "Your Company Name"

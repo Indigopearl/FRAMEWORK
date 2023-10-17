@@ -422,3 +422,272 @@ class AboutPageTest(SimpleTestCase):
         self.assertContains(response, '<h1>About page</h1>')
 
 ```
+
+#### Topics
+- Request and Response object
+- function based vs. class based views
+- custom tags and filter
+- for loop and if tag
+- mixins in views
+
+
+### Request and Response object
+
+- All views always receive a first argument that contains a request object.
+- it has attributes like:
+1. request.method
+2. request.GET
+3. request.POST
+4. request.COOKIES
+etc.
+
+```python
+def homePageView(request):
+    print(request)
+    print(request.method == 'GET')
+    print(request.COOKIES)
+   ......
+```
+
+- The response object is a file-like object (a I/O stream) and has the usual methods.
+- response = **HttpResponse()** # returns response
+- **render** also returns response object
+- All views must always return 
+a response object.
+
+e.g.:
+
+```python
+def homePageView(request):
+    # print(request)
+    # print(request.method == 'GET')
+    # print(request.COOKIES)
+    context = {
+        'key1': 'value1',
+        'key2': 'value2',
+        'key3': 'Hello',
+        'first': [1, 2, 3],
+        'second': [4, 5, 6],
+        'today': datetime.now(),
+        'notes': "<strong>Note:</strong> Always learn something new!",
+        'js_inject':"<script>alert('Hello World')</script>"
+    }
+    response_render = render(request, 'home2.html', context)
+    print('Response:', response_render)
+    print('####################################################')
+    response = HttpResponse('<h1>Hello</h1>')
+    response.write('<div>Hello2</div>')
+    response.write('<div>Hello2</div>')
+    response.set_cookie('my_cookie', 'my_cookie_value')
+    print(response)
+    print('####################################################')
+    print(HttpResponseForbidden('you are not allowed to enter'))
+    print(HttpResponseServerError())
+    return response
+```
+
+### Function based versus class based
+
+```python
+## function based view
+def homePageView(request):
+    print(request)
+```
+
+```python
+## class based view
+class HomePageView(TemplateView):
+    template_name = "home.html"
+
+    def render_to_response(self, context, **kwargs):
+        print(self.request.COOKIES.get('my_cookie'))
+        if self.request.COOKIES.get('my_cookie') == 'my_cookie_value':
+            response = HttpResponse('With cookie')
+            return response
+        return super().render_to_response(context, **kwargs)
+```
+
+## Custom template tags
+
+
+```bash
+├── db.sqlite3
+├── django_project_live
+├── manage.py
+├── pages
+│   ├── admin.py
+│   ├── apps.py
+│   ├── __init__.py
+│   ├── models.py
+│   ├── templatetags
+│   │   ├── init.py
+│   │   └── my_tags.py
+│   ├── tests.py
+│   ├── urls.py
+│   └── views.py
+├── README.md
+├── requirements.txt
+└── templates
+    ├── about.html
+    ├── base.html
+    ├── header.html
+    ├── home2.html
+    └── home.html
+```
+
+- Template tags are functions.
+- Custom template tags must be defined in a directory named templatetags inside an app directory.
+- The directory must have an empty __init__.py file.
+- The app must be in the INSTALLED_APPS settings constant.
+- We can have as many files as we want with any name we want.
+- The file with the template tag definition must be loaded in the template, using the load built-in tag.
+- The template tag function must be registered in the library.
+- It can be done with the simple_tag decorator.
+
+
+### Simple tag
+
+templates/home2.html 
+
+```html
+
+{% load my_tags %}
+
+<h1>{% hello_world %}</h1>
+```
+
+django_project2/pages/templatetags/my_tags.py:
+
+```python
+from django import template
+
+register = template.Library()
+
+@register.simple_tag
+def hello_world():
+    return 'Hello World'
+```
+
+- Multiple template tag modules, custom and built-in, can be loaded.
+- Custom tags may also accept arguments.
+- The inclusion_tag decorator is a shortcut for a template renderer.
+
+### Inclusion_tag
+
+The inclusion_tag is a feature of Django's templating system that lets you define a template tag that renders a specific template. 
+
+### Step 1: Define the `inclusion_tag` to accept an argument
+
+Create `footer_tags.py`:
+
+# pages/templatetags/footer_tags.py
+
+```python
+from django import template
+
+register = template.Library()
+
+@register.inclusion_tag('footer.html')
+def render_footer(company_name="My Comany"):
+    return {'company_name': company_name}
+```
+
+### Step 2: Create the template to be included
+
+Create `footer.html`
+
+```html
+<!-- templates/footer.html -->
+<footer>
+    Copyright &copy; {{ company_name }}.
+</footer>
+```
+
+### Step 3: Use the `inclusion_tag` with an argument in another template
+
+Load the templatetag and use `render_footer` with a specified company name:
+
+```html
+{% load footer_tags %}
+
+... rest of your template ...
+
+{% render_footer "AwesomeCo" %}
+```
+
+Now, when this template is rendered, the footer will display:
+
+```
+Copyright © AwesomeCo.
+```
+
+By providing default values in the inclusion tag definition (like "My Company" in our example), you ensure that the tag remains flexible.
+It can be used with or without specifying the company name. If no name is provided, it'll default to "My Company".
+
+## Topics
+
+- Mixins
+- Django Admin (ORM)
+
+## Using a Mixin in a Django View
+
+Mixins are a way to reuse code across multiple class-based views.
+They can be particularly useful when certain patterns of behavior are needed across multiple views.
+
+
+### 1. Defining the Mixin
+
+First, let's define a mixin that checks if the user's browser accessing the view has a cookie with a special value stored. 
+
+Create `mixin class` :
+
+```python
+from django.http import HttpResponseForbidden
+
+class ActiveUserRequiredMixin(object):
+    """
+    Mixin to ensure the user is active.
+    """
+    class ActiveRequiredMixin:
+    def dispatch(self, request, *args, **kwargs):
+        if request.COOKIES.get('my_cookie') == 'my_cookie_value':
+            return super().dispatch(request, *args, **kwargs)
+        return HttpResponseForbidden('You are not allowed to access')
+```
+
+### 2. Applying the Mixin to a View
+
+Now that we have our mixin ready, let's apply it to a view. For this example, we'll use a basic `TemplateView`.
+
+```python
+from django.views.generic import TemplateView
+
+class DashboardView(ActiveUserRequiredMixin, TemplateView):
+    template_name = 'dashboard.html'
+```
+
+Note the order of inheritance: the mixin should come before the view base class. This is because the `dispatch` method in the mixin should be the first one to be invoked.
+
+### 3. Configuring the URL
+
+Ensure that the view is reachable by configuring its URL in your `urls.py`.
+
+```python
+from django.urls import path
+from .views import DashboardView
+
+urlpatterns = [
+    path('dashboard/', DashboardView.as_view(), name='dashboard'),
+]
+```
+
+### 4. Testing the Mixin
+
+1. Run your Django server.
+2. Navigate to the `/dashboard/` URL.
+3. If there is a cookie with a value my_cookie_value' you would access the dashboard page
+4. other you would be directed to `HttpResponseForbidden('You are not allowed to access')`
+
+### 5. Conclusion
+
+Mixins allow you to modularize and reuse specific pieces of functionality across different views. The `ActiveRequiredMixin` is just one simple example. You can build more complex mixins that handle different types of checks, add context data, or even modify the behavior of the view based on specific conditions.

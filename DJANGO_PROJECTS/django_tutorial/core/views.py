@@ -1,4 +1,6 @@
 from django.http import HttpResponseForbidden
+from django.views.generic import ListView
+from .models import Item
 
 
 class UserAuthMixin:
@@ -13,3 +15,9 @@ from django.views.generic import TemplateView
 
 class ProtectedView(UserAuthMixin, TemplateView):
     template_name = "protected.html"
+
+
+class ItemListView(ListView):
+    model = Item
+    template_name = "item_list.html"
+    context_object_name = "items"

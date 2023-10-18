@@ -1,0 +1,25 @@
+/* static/css/items.css */
+
+.item-list {
+    list-style-type: none;
+    padding: 0;
+}
+
+.item {
+    background-color: #e20909;
+    padding: 10px;
+    border: 1px solid #ddd;
+    margin: 5px 0;
+}
+
+.item-name {
+    font-weight: bold;
+}
+
+.item-description {
+    color: #ff0000;
+}
+
+.item:hover {
+    background-color: #e86f6f;
+}

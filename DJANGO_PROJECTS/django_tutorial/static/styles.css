@@ -1,0 +1,89 @@
+/* static/css/styles.css */
+
+body {
+    text-align: center;
+    font-family: Arial, sans-serif;
+    background-color: #f2f2f2;
+    margin: 0;
+    padding: 0;
+}
+
+.header {
+    background-color: #333;
+    color: white;
+    padding: 10px;
+    display: flex;
+    justify-content: space-between;
+}
+
+.header h1 {
+    margin: 0;
+}
+
+.header ul {
+    list-style: none;
+    padding: 0;
+    display: flex;
+}
+
+.header ul li {
+    margin-right: 10px;
+}
+
+.header ul li a {
+    color: white;
+    text-decoration: none;
+    transition: color 0.3s;
+}
+
+.header ul li a:hover {
+    color: #b8b8b8;
+    text-decoration: underline;
+}
+
+.top-bar {
+    position: sticky;
+    top: 0;
+    background-color: #333;
+    color: white;
+    z-index: 100;
+}
+
+.content {
+    margin: 20px;
+    padding: 20px;
+    background-color: white;
+    border-radius: 5px;
+}
+
+.footer {
+    padding: 10px;
+    background-color: #333;
+    color: white;
+}
+
+
+
+.item-list {
+    list-style-type: none;
+    padding: 0;
+}
+
+.item {
+    background-color: #8e5050;
+    padding: 10px;
+    border: 1px solid #ddd;
+    margin: 5px 0;
+}
+
+.item-name {
+    font-weight: bold;
+}
+
+.item-description {
+    color: #151515;
+}
+
+.item:hover {
+    background-color: #e86f6f;
+}

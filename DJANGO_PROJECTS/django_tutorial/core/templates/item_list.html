@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block page_title %}My Django Items Page{% endblock %}
+{% load static %}
+<head>
+    <link rel="stylesheet" type="text/css" href="{% static 'styles.css' %}">
+</head>
+{% block content %}
+    <ul class="item-list">
+        {% for item in items %}
+            <li class="item">
+                <div class="item-name">{{ item.name }}</div>
+                <div class="item-description">{{ item.description }}</div>
+            </li>
+        {% endfor %}
+    </ul>
+{% endblock %}

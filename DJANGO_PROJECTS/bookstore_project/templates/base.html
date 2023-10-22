@@ -1,0 +1,33 @@
+<!-- templates/base.html -->
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>Bookstore</title>
+        <meta name="description" content="Your bookstore description goes here">
+        <meta name="keywords" content="books, reading, literature">
+        <link rel="stylesheet" type="text/css" href="{% static 'css/base.css' %}">
+        {% block extra_head %}{% endblock %}
+    </head>
+    <body>
+        <div class="top-bar">
+            <div class="header">
+                <h1>
+                    {% block page_title %}Bookstore{% endblock %}
+                </h1>
+                <ul>
+                    <li>
+                        <a href="{% url 'books:book_list' %}">Home</a>
+                    </li>
+                    <li>
+                        <a href="{% url 'books:book_list' %}">Books</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div class="content">
+            {% block content %}{% endblock %}
+        </div>
+        <div class="footer">{% include 'footer.html' %}</div>
+    </body>
+</html>

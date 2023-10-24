@@ -2,7 +2,15 @@
 from django.urls import reverse_lazy
 from django.views.generic import ListView, DetailView, UpdateView, CreateView, DeleteView
 from .models import Book
+from django.shortcuts import render
+from django.views.generic import TemplateView
 
+
+class HomeView(TemplateView):
+    template_name = 'home.html'
+    
+def home(request):
+    return render(request, 'home.html')
 class BookListView(ListView):
     model = Book
     template_name = 'books/book_list.html'

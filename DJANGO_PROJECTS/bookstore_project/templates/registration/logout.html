@@ -1,0 +1,9 @@
+<!-- templates/registration/logout.html -->
+{% extends "base.html" %}
+{% block content %}
+    <h2>Logout</h2>
+    <p>You have been successfully logged out.</p>
+    <p>
+        Return to the <a href="{% url 'books:home' %}">home page</a>.
+    </p>
+{% endblock %}

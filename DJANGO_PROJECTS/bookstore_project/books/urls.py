@@ -9,11 +9,11 @@ from .views import (
     BookDeleteView,
 )
 
-app_name = "books"  # Optional, but helps with namespacing URLs
+app_name = "books"
 
 urlpatterns = [
     path("", TemplateView.as_view(template_name="home.html"), name="home"),
-    path("", BookListView.as_view(), name="book_list"),
+    path("books/", BookListView.as_view(), name="book_list"),
     path("book/<int:pk>/", BookDetailView.as_view(), name="book_detail"),
     path("book/new/", BookCreateView.as_view(), name="book_create"),
     path("book/<int:pk>/edit/", BookUpdateView.as_view(), name="book_edit"),

@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "books",
+    "accounts",
 ]
 
 MIDDLEWARE = [
@@ -128,6 +129,10 @@ STATICFILES_DIRS = [
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
-# Aditional
 
+# Authentication settings
+LOGIN_REDIRECT_URL = "books:home"
+LOGOUT_REDIRECT_URL = "books:home"
+
+# Other custom settings
 COMPANY_NAME = "My Company Name"

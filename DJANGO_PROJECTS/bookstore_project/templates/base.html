@@ -6,7 +6,7 @@
         <title>Bookstore</title>
         <meta name="description" content="Your bookstore description goes here">
         <meta name="keywords" content="books, reading, literature">
-        <link rel="stylesheet" type="text css" href="{% static 'css/base.css' %}">
+        <link rel="stylesheet" type="text/css" href="{% static 'css/base.css' %}">
         {% block extra_head %}{% endblock %}
     </head>
     <body>
@@ -17,12 +17,22 @@
                 </h1>
                 <ul>
                     {% if user.is_authenticated %}
-                        <li><a href="{% url 'books:home' %}">Home</a></li>
-                        <li><a href="{% url 'accounts:logout' %}">Logout</a></li>
-                        <li><a href="{% url 'accounts:profile' %}">{{ user.username }}</a></li>
+                        <li>
+                            <a href="{% url 'books:home' %}">Home</a>
+                        </li>
+                        <li>
+                            <a href="{% url 'accounts:logout' %}">Logout</a>
+                        </li>
+                        <li>
+                            <a href="{% url 'accounts:profile' %}">{{ user.username }}</a>
+                        </li>
                     {% else %}
-                        <li><a href="{% url 'accounts:login' %}">Login</a></li>
-                        <li><a href="{% url 'accounts:signup' %}">Signup</a></li>
+                        <li>
+                            <a href="{% url 'accounts:login' %}">Login</a>
+                        </li>
+                        <li>
+                            <a href="{% url 'accounts:signup' %}">Signup</a>
+                        </li>
                     {% endif %}
                 </ul>
             </div>

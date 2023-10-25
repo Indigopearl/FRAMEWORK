@@ -258,11 +258,9 @@ from django.urls import reverse_lazy
 from django.views.generic import CreateView
 class SignUpView(CreateView):
 
-form_class = UserCreationForm
-
-success_url = reverse_lazy("login")
-
-template_name = "signup.html"
+    form_class = UserCreationForm
+    success_url = reverse_lazy("login")
+    template_name = "signup.html"
 ```
 
 - We’re subclassing the generic class-based view CreateView 
@@ -369,4 +367,212 @@ Django does all the hard work of managing session ids.
 The session property of the request object in views can be used to get and set the data.
 
 
+### Topic:
+
+- Middleware in Django
+- register Middleware
+- built-in Middleware
+- custom Middleware
+
+### Middleware
+
+Middleware is a framework hooks into Django’s request/response processing.
+
+It’s a light, low-level “plugin” system for globally altering Django’s input or output.
+
+Each middleware component is responsible for doing some specific function.
+For example, Django includes a middleware component, AuthenticationMiddleware, that associates users with requests using sessions.
+
+
+![Alt text](image.png)
+
+### Built-in middleware
+
+- middleware components that come with Django
+- see settings.py:
+
+```python
+#django_project/settings.py
+MIDDLEWARE = [
+    'django.middleware.security.SecurityMiddleware',
+    'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.middleware.common.CommonMiddleware',
+    'django.middleware.csrf.CsrfViewMiddleware',
+    'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'django.contrib.messages.middleware.MessageMiddleware',
+    'django.middleware.clickjacking.XFrameOptionsMiddleware',
+]
+```
+
+### Writing your own middleware
+
+A middleware factory is a callable that takes a get_response callable and returns a middleware.
+
+A middleware is a callable that takes a request and returns a response, just like a view.
+
+A middleware can be written as a function that looks like this:
+
+```python
+def simple_middleware(get_response):
+    # One-time configuration and initialization.
+
+    def middleware(request):
+        # Code to be executed for each request before
+        # the view (and later middleware) are called.
+
+        response = get_response(request)
+
+        # Code to be executed for each request/response after
+        # the view is called.
+
+        return response
+
+    return middleware
+```
+
+Or it can be written as a class whose instances are callable, like this:
+
+```python
+class SimpleMiddleware:
+    def __init__(self, get_response):
+        self.get_response = get_response
+        # One-time configuration and initialization.
+
+    def __call__(self, request):
+        # Code to be executed for each request before
+        # the view (and later middleware) are called.
+
+        response = self.get_response(request)
+
+        # Code to be executed for each request/response after
+        # the view is called.
+
+        return response
+```
+
+The **get_response** callable provided by Django might be the actual view (if this is the last listed middleware) or it might be the next middleware in the chain. 
+
+The current middleware doesn’t need to know or care what exactly it is, just that it represents whatever comes next.
+
+Middleware can live anywhere on your Python path.
+
+### __ init__(get_response)
+
+Middleware factories must accept a get_response argument.
+
+You can also initialize some global state for the middleware.
+
+### Activating middleware
+To activate a middleware component, add it to the MIDDLEWARE list in your Django settings.py.
+
+```python
+MIDDLEWARE = [
+    "django.middleware.security.SecurityMiddleware",
+    "django.contrib.sessions.middleware.SessionMiddleware",
+    "django.middleware.common.CommonMiddleware",
+    "django.middleware.csrf.CsrfViewMiddleware",
+    "django.contrib.auth.middleware.AuthenticationMiddleware",
+    "django.contrib.messages.middleware.MessageMiddleware",
+    "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    ...
+]
+```
+
+The order in MIDDLEWARE matters because a middleware can depend on other middleware. For instance, AuthenticationMiddleware stores the authenticated user in the session; therefore, it must run after SessionMiddleware. 
+
+### Middleware order and layering
+
+During the request phase, before calling the view, Django applies middleware in the order it’s defined in MIDDLEWARE, top-down.
+
+You can think of it like an onion:
+
+each middleware class is a “layer” that wraps the view,
+which is in the core of the onion.
+
+If the request passes through all the layers of the onion (each one calls get_response to pass the request in to the next layer), all the way to the view at the core,
+the response will then pass through every layer (in reverse order) on the way back out.
+
+If one of the layers decides to short-circuit and return a response without ever calling its get_response, none of the layers of the onion inside that layer (including the view) will see the request or the response.
+
+The response will only return through the same layers that the request passed in through.
+
+### Example 1 (Return a response with text if the user is authenticated)
+
+```python
+from django.contrib.auth.models import User
+from django.http import HttpResponse
+
+class SpecialUserMiddleware:
+    def __init__(self, get_response):
+        self.get_response = get_response
+        # One-time configuration and initialization.
+
+    def __call__(self, request):
+        # Code to be executed for each request before
+        # the view (and later middleware) are called.
+
+        user_id = request.session.get('_auth_user_id')
+        if user_id:
+            user = User.objects.get(pk=user_id)
+            return HttpResponse(f"You are user {user}!")
+
+        response = self.get_response(request)
+     
+        print(response)
+        response.write('Hello world')
+
+         
+        return response
+
+        # Code to be executed for each request/response after
+        # the view is called.
+
+        return response
+```
+- When Django initializes the middleware, it provides a get_response callable, which is the next layer in the middleware stack.
+- The __call__ method is invoked on each request. It receives the current request object and allows us to inspect or modify it.
+- We attempt to retrieve the user's ID from the session using the key _auth_user_id. This is how Django's authentication system keeps track of logged-in users.
+- If a user ID is found (i.e., the user is logged in), we fetch the corresponding User object from the database.
+- We then immediately send a response to the user, informing them of their username. The middleware short-circuits the regular view processing in this case.
+- If no user ID is found (i.e., the user isn't logged in), we call the get_response callable, which continues processing the request through the remaining middleware layers and eventually the designated view.
+
+### Example2 (protected routes Middleware)
+
+```python
+from django.urls import reverse, resolve
+from django.http import HttpResponseRedirect
+
+class ProtectSpecificRoutesMiddleware:
+    def __init__(self, get_response):
+        self.get_response = get_response
+
+    def __call__(self, request):
+
+        # List of protected URL names
+        protected_url_names = [
+            'home',
+            'post_new',
+            'post_edit',
+            'post_delete',
+        ]
+
+        # Resolve the current path to its URL name
+        try:
+            current_url_name = resolve(request.path_info).url_name
+        except:
+            current_url_name = None
+
+        # Check if the current URL name is in the protected list and the user is not authenticated
+        if current_url_name in protected_url_names and not request.user.is_authenticated:
+            # Redirect the user to the login page or any other page
+            return HttpResponseRedirect(reverse('login'))
+
+        response = self.get_response(request)
+        return response
+```
+
+- We have a list of URL names that we wish to protect. Users trying to access these routes will be checked for authentication.
+-  For each request, we use the resolve function to determine the URL name associated with the current path.
+- If the path doesn't correspond to any URL name, we set current_url_name to None.
+- If the URL isn't protected or the user is authenticated, we continue processing the request through subsequent middleware layers and eventually to the designated view.
 

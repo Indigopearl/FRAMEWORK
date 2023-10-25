@@ -75,6 +75,5 @@ class BlogTests(TestCase):
 
     def test_post_deleteview(self):
         response = self.client.post(reverse("post_delete", args="1"))
-        print(Post.objects.all())
         self.assertEqual(response.status_code, 302)
         self.assertIsNone(Post.objects.last())

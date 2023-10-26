@@ -22,7 +22,7 @@
                     <td>${{ book.price }}</td>
                     <td>
                         <a href="{% url 'books:book_detail' book.pk %}">View</a>
-                        <a href="{% url 'books:book_edit' book.pk %}">Edit</a>
+                        <a href="{% url 'books:book_update' book.id %}">Edit</a>
                         <a href="{% url 'books:book_delete' book.pk %}">Delete</a>
                     </td>
                 </tr>

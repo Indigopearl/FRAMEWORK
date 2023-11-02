@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>Plant List</title>
+        <meta name="description" content="Your bookstore description goes here">
+        <meta name="keywords" content="books, reading, literature">
+    </head>
+    <body>
+        <h1>List of Plants</h1>
+        <table>
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Species</th>
+                    <th>Date Planted</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for plant in plants %}
+                    <tr>
+                        <td>{{ plant.name }}</td>
+                        <td>{{ plant.species }}</td>
+                        <td>{{ plant.date_planted }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </body>
+</html>
